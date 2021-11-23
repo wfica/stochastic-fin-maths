@@ -24,6 +24,9 @@ class Asset:
     def changeBeta(self, beta):
         self.beta = beta
 
+    def getName(self):
+        return self.name
+
     def getAssetCoef(self):
         return ((self.rate - self.beta)/self.alpha) - (self.alpha/2.)
 
