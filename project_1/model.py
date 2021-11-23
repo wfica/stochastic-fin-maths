@@ -56,12 +56,12 @@ class Model:
         if name == None:
             return -1
         for i in range(len(self.assets)):
-            if assets[i].name == name:
+            if self.assets[i].name == name:
                 return i
 
     def changeCorrelation(self, name1, value, name2 = None):
-        idx1 = getAssetIdx(name1)
-        idx2 = getAssetIdx(name2)
+        idx1 = self.getAssetIdx(name1)
+        idx2 = self.getAssetIdx(name2)
         self.covMat[idx1][idx2] = value
         self.covMat[idx2][idx1] = value
 
