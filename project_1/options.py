@@ -2,6 +2,7 @@ import numpy as np
 from scipy.stats import norm
 
 class Option:
+    NUM_TRADING_DAYS = 250
     def __init__(self, prices, rate, strike):
         self.E = strike
         self.sigma = self.getSigma(self.getReturns(prices))
@@ -18,7 +19,7 @@ class Option:
 
     def update(self, price, time):
         self.S = price
-        self.time = time/250.
+        self.time = time/self.NUM_TRADING_DAYS
 
     def d1(self):
         return (np.log(self.S/self.E) + (self.r + 0.5*(self.sigma*self.sigma)) * self.time) / \

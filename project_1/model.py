@@ -66,6 +66,13 @@ class Model:
         self.covMat[idx2][idx1] = value
 
     def MonteCarloRealRN(self, iters):
+        """ Produces random trajectories for each asset.
+        Args:
+            - iter: number of trading days to generate. 
+        Returns: 
+            - a tuple (random trajectories, RN derivative).  
+            trajectories.shape = (iters+1, number of assets)
+        """
         noa = len(self.assets)
         trajectories = np.zeros((iters+1, noa))
         K = 1.
