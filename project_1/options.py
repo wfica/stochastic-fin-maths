@@ -3,10 +3,11 @@ from scipy.stats import norm
 
 class Option:
     NUM_TRADING_DAYS = 250
-    def __init__(self, prices, rate, strike):
+    def __init__(self, prices, rate, strike, trading_days_till_expiry):
         self.E = strike
         self.sigma = self.getSigma(self.getReturns(prices))
         self.r = rate
+        self.trading_days_till_expiry = trading_days_till_expiry
 
     def getReturns(self, prices):
         prices = np.array(prices)

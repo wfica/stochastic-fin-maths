@@ -84,3 +84,15 @@ class Model:
                 trajectories[i][j] = trajectories[i-1][j]*self.assets[j].modelReturn(randomSample[j])
             K *= randomSample[noa]
         return trajectories, np.exp(K)
+
+    def PriceOption(self, option, base_asset_idx):
+        s = 0
+        # trajectories_hist = []
+        NUM_ITER = 100
+        for _ in range(NUM_ITER):
+            trajectories, rd = self.MonteCarloRealRN(option.trading_days_till_expiry)
+            s += option.payoff(trajectories[:,base_asset_idx])*rd/np.exp(option.r * option.trading_days_till_expiry / option.NUM_TRADING_DAYS)
+            # trajectories_hist.append(trajectories)
+        
+        return s / NUM_ITER #, trajectories_hist
+        
