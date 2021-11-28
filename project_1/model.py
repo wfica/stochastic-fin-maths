@@ -85,14 +85,44 @@ class Model:
             K *= randomSample[noa]
         return trajectories, np.exp(K)
 
-    def PriceOption(self, option, base_asset_idx):
+    def MonteCarloQ(self, iters):
+        mis = np.zeros(len(self.assets))
+        for i, a in enumerate(self.assets):
+            mis[i] = a.getAssetCoef()
+        allPrices = []
+        for asset in self.assets:
+           allPrices.append(asset.logReturns)
+        corrcoef = np.exp(np.corrcoef(allPrices))/2
+        for i in range(len(self.assets)):
+            corrcoef[i][i] = 1
+            for j in range(i+1, len(self.assets)):
+                corrcoef[i][j] -= mis[i]*mis[j]
+                corrcoef[j][i] -= mis[i]*mis[j]
+        trajectories = np.zeros((iters+1, len(self.assets)))
+        for i, asset in enumerate(self.assets):
+            trajectories[0][i] = asset.prices[-1]
+        for i in range(1, iters+1):
+            randomSample = np.random.multivariate_normal(mis, corrcoef)
+            for j in range(len(self.assets)):
+                trajectories[i][j] = trajectories[i-1][j]*self.assets[j].modelReturn(randomSample[j])
+        return trajectories
+
+    def PriceOptionR(self, option, base_asset_idx, NUM_ITER = 100):
         s = 0
         # trajectories_hist = []
-        NUM_ITER = 100
         for _ in range(NUM_ITER):
             trajectories, rd = self.MonteCarloRealRN(option.trading_days_till_expiry)
             s += option.payoff(trajectories[:,base_asset_idx])*rd/np.exp(option.r * option.trading_days_till_expiry / option.NUM_TRADING_DAYS)
             # trajectories_hist.append(trajectories)
         
         return s / NUM_ITER #, trajectories_hist
-        
+
+    def PriceOptionQ(self, option, base_asset_idx, NUM_ITER = 100):
+        s = 0
+        # trajectories_hist = []
+        for _ in range(NUM_ITER):
+            trajectories = self.MonteCarloQ(option.trading_days_till_expiry)
+            s += option.payoff(trajectories[:,base_asset_idx])
+            # trajectories_hist.append(trajectories)
+
+        return s / NUM_ITER #, trajectories_hist
