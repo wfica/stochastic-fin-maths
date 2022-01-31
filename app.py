@@ -7,8 +7,8 @@ from matplotlib import cm
 import plotly.graph_objects as go
 import plotly.express as px
 import dash
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc
+from dash import html
 from dash.dependencies import Input, Output, State
 from plotly.subplots import make_subplots
 
@@ -575,4 +575,6 @@ def update_trajectory(n_clicks, asset, option_type, trajectory_type):
 
 
 if __name__ == '__main__':
+    # from waitress import serve
+    # serve(app, host="0.0.0.0", port=8080)
     app.run_server(debug=True)
